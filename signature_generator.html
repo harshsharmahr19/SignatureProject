@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Signature Generator</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Pacifico&family=Dancing+Script&display=swap">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f0f4f8;
+            margin: 0;
+            padding: 0;
+            color: #333;
+        }
+        h1 {
+            color: #4a90e2;
+            margin-top: 20px;
+        }
+        h2 {
+            color: #50e3c2;
+            margin: 10px 0;
+        }
+        p {
+            color: #777;
+            font-size: 1.2rem;
+        }
+        #nameInput {
+            padding: 10px;
+            font-size: 1rem;
+            border: 2px solid #4a90e2;
+            border-radius: 5px;
+            margin: 10px;
+            width: 300px;
+            max-width: 90%;
+        }
+        button {
+            background-color: #4a90e2;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 10px 20px;
+            margin: 5px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        button:hover {
+            background-color: #357abd;
+        }
+        #signatures, #custom-signatures {
+            margin: 20px auto;
+            max-width: 900px;
+        }
+        .signature-container, .custom-signature-container {
+            margin: 20px 0;
+        }
+        .signature, .custom-signature {
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            background-color: #fff;
+            width: 90%;
+            max-width: 600px;
+            height: 200px;
+            margin-bottom: 10px;
+        }
+        .custom-signature {
+            max-width: 900px;
+            height: 400px;
+        }
+        .emoji {
+            font-size: 1.5rem;
+            margin: 0 10px;
+        }
+        .image-container {
+            margin: 20px 0;
+        }
+        .image-container img {
+            width: 100px;
+            height: auto;
+        }
+    </style>
+</head>
+<body>
+    <h1>✍️ Signature Generator</h1>
+    <div id="custom-signatures">
+        <h2>🖌️ Draw Your Custom Signature</h2>
+        <div class="custom-signature-container">
+            <canvas class="custom-signature" id="customSignature"></canvas>
+            <button onclick="downloadSignature('customSignature')">Download Custom Signature</button>
+            <button onclick="clearCanvas('customSignature')">Clear Custom Signature</button>
+        </div>
+    </div>
+
+    <p>Enter your name to generate different signature styles:</p>
+    <input type="text" id="nameInput" placeholder="Enter your name">
+    <button onclick="generateSignatures()">Generate Signatures</button>
+    <button onclick="clearSignatures()">Clear Signatures</button>
+    
+    <div id="signatures">
+        <div class="signature-container">
+            <h2>Signature Style 1 🌟</h2>
+            <canvas class="signature" id="signature1"></canvas>
+            <button onclick="downloadSignature('signature1')">Download Signature 1</button>
+            <button onclick="clearCanvas('signature1')">Clear Signature 1</button>
+        </div>
+        <div class="signature-container">
+            <h2>Signature Style 2 ✨</h2>
+            <canvas class="signature" id="signature2"></canvas>
+            <button onclick="downloadSignature('signature2')">Download Signature 2</button>
+            <button onclick="clearCanvas('signature2')">Clear Signature 2</button>
+        </div>
+        <div class="signature-container">
+            <h2>Signature Style 3 🎨</h2>
+            <canvas class="signature" id="signature3"></canvas>
+            <button onclick="downloadSignature('signature3')">Download Signature 3</button>
+            <button onclick="clearCanvas('signature3')">Clear Signature 3</button>
+        </div>
+    </div>
+
+    <div class="image-container">
+        <img src="https://via.placeholder.com/100" alt="Placeholder Image">
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/signature_pad@3.0.0-beta.4/dist/signature_pad.umd.min.js"></script>
+    <script>
+        let signaturePad1, signaturePad2, signaturePad3;
+        let customSignaturePad;
+
+        function resizeCanvas(canvas) {
+            const ratio = Math.max(window.devicePixelRatio || 1, 1);
+            canvas.width = canvas.offsetWidth * ratio;
+            canvas.height = canvas.offsetHeight * ratio;
+            canvas.getContext("2d").scale(ratio, ratio);
+        }
+
+        function initializeSignaturePads() {
+            const canvas1 = document.getElementById('signature1');
+            const canvas2 = document.getElementById('signature2');
+            const canvas3 = document.getElementById('signature3');
+
+            signaturePad1 = new SignaturePad(canvas1);
+            signaturePad2 = new SignaturePad(canvas2);
+            signaturePad3 = new SignaturePad(canvas3);
+
+            resizeCanvas(canvas1);
+            resizeCanvas(canvas2);
+            resizeCanvas(canvas3);
+        }
+
+        function initializeCustomSignaturePad() {
+            const customCanvas = document.getElementById('customSignature');
+            customSignaturePad = new SignaturePad(customCanvas);
+            resizeCanvas(customCanvas);
+        }
+
+        function generateSignatures() {
+            const name = document.getElementById('nameInput').value;
+            if (name.trim() === '') {
+                alert('Please enter a name.');
+                return;
+            }
+
+            initializeSignaturePads();
+            initializeCustomSignaturePad(); // Ensure custom signature pad is initialized
+
+            drawSignature(signaturePad1, name, '48px Great Vibes', 'black');
+            drawSignature(signaturePad2, name, '48px Pacifico', 'blue');
+            drawSignature(signaturePad3, name, '48px Dancing Script', 'green');
+        }
+
+        function drawSignature(signaturePad, text, font, color) {
+            const canvas = signaturePad.canvas;
+            const context = canvas.getContext('2d');
+            context.clearRect(0, 0, canvas.width, canvas.height);
+            context.font = font;
+            context.fillStyle = color;
+            context.fillText(text, 20, 70);
+        }
+
+        function clearSignatures() {
+            if (signaturePad1) signaturePad1.clear();
+            if (signaturePad2) signaturePad2.clear();
+            if (signaturePad3) signaturePad3.clear();
+        }
+
+        function clearCanvas(canvasId) {
+            const canvas = document.getElementById(canvasId);
+            const signaturePad = new SignaturePad(canvas);
+            signaturePad.clear();
+        }
+
+        function downloadSignature(canvasId) {
+            const canvas = document.getElementById(canvasId);
+            const link = document.createElement('a');
+            link.href = canvas.toDataURL('image/png');
+            link.download = `${canvasId}.png`;
+            link.click();
+        }
+
+        // Initialize custom signature pad on page load
+        initializeCustomSignaturePad();
+    </script>
+</body>
+</html>
